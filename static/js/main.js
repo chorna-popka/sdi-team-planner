@@ -11,57 +11,149 @@ function getDateOfISOWeek(w, y) {
 }
 
 !(function($) {
-  "use strict";
+    "use strict";
+    const YEAR = 2021;
     $('[data-toggle="tooltip"]').tooltip();
 
-    $("div[data-week]").each(function(index) {
-    $(this).on("click", function(){
-        var guy =  $(this).data('id');
-        var vacation = false;
-        if ($(this).hasClass('vacationcell')) {
-            $('#editCellType').html("Vacation");
-            vacation = true;
-            var vacationId = $(this).data('project');
-            //fetch vacation
-        } else if ($(this).hasClass('emptycell')) {
-            //do nothing
-            $('#editCellType').html("Add plan");
-            var week = $(this).data('week');
-            var start = getDateOfISOWeek(parseInt(week), 2021);
-            $('#editCellStart').val(start);
-        } else {
-            var projectId = $(this).data('project');
-            $('#editCellType').html($(this).data('original-title'));
-            //fetch project
-        }
-        
-        $('#editCell').modal('show');
+    $('#editCellChoice').on("change", function() {
+
     });
-});
 
-    $('#editCedll').on('show.bs.modal', function (event) {
-        var cell = $(event.relatedTarget) // Button that triggered the modal
-        var mate = cell.data('id') // Extract info from data-* attributes
-        var full_name = cell.data('person')
-        var modal = $(this)
-        fetch('/get/' + mate,
-        {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            method: 'POST',
-            body: JSON.stringify({
-                "id": mate
-            })
-        }).then(function (response) {
-        return response.json();
-        }).then(function (text) {
-        //here we process the returned array
-          modal.find('.modal-title').text('Manage ' + full_name);
-      });
+    $("div[data-week]").each(function(index) {
+        $(this).on("click", function(){
+            var guy = $(this).data('guy');
+            if ($(this).hasClass('vacationcell')) {
+                var vacationId = $(this).data('project');
+                $('#editCellLabel').html("Edit vacation");
+                //fetch vacation
+                fetch('/get/vacation',
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST',
+                    body: JSON.stringify({
+                        "guy": guy,
+                        "vacation": vacationId
+                    })
+                }).then(function (response) {
+                return response.json();
+                }).then(function (text) {
+                    //here we process the returned array
+                    $('#editCellGuy').val(guy);
+                    $('#editCellWhat').val("V");
+                    $('#editCellProject').val(vacationId);
+                    $('#editCellChoice').hide();
+                    $('#editCellType').show();
+                    $('#editCellType').html("Vacation");
+                    $('#editCellStart').val(text[0].start);
+                    $('#editCellEnd').val(text[0].end);
+                });
+            } else if ($(this).hasClass('emptycell')) {
+                $('#editCellLabel').html("Add plan");
 
+                var week = $(this).data('week');
+                var start = getDateOfISOWeek(parseInt(week), YEAR);
+                $('#editCellGuy').val(guy);
+                $('#editCellWhat').val("E");
+                $('#editCellStart').val(start);
+                $('#editCellEnd').val("");
+                $('#editCellType').hide();
+                $('#editCellChoice').show();
 
-     //   modal.find('.modal-body input').val(mate)
-    })
+            } else {
+                var projectId = $(this).data('project');
+                var projectName = $(this).data('original-title');
+                $('#editCellLabel').html("Edit assignment");
+                //fetch project
+                fetch('/get/project',
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST',
+                    body: JSON.stringify({
+                        "guy": guy,
+                        "project": projectId
+                    })
+                }).then(function (response) {
+                return response.json();
+                }).then(function (text) {
+                    //here we process the returned array
+                    $('#editCellGuy').val(guy);
+                    $('#editCellWhat').val("P");
+                    $('#editCellProject').val(projectId);
+                    $('#editCellChoice').hide();
+                    $('#editCellType').show();
+                    $('#editCellType').html(projectName);
+                    $('#editCellStart').val(text[0].start);
+                    $('#editCellEnd').val(text[0].end);
+                });
+            }
 
+            $('#editCell').modal('show');
+        });
+    });
+
+    $("#editCellSave").on("click", function() {
+        //send data to flask
+        if ($('#editCellWhat').val() == "V") {
+            fetch('/save/vacation',
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    "guy": $('#editCellGuy').val(),
+                    "vacation": $('#editCellProject').val(),
+                    "start": $('#editCellStart').val(),
+                    "end": $('#editCellEnd').val()
+                })
+            }).then(function (response) {
+            return response.text();
+            }).then(function (text) {
+               $('#editCell').modal('hide');
+               document.location.reload(true);
+            });
+        } else if ($('#editCellWhat').val() == "P"){
+            fetch('/save/project',
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    "guy": $('#editCellGuy').val(),
+                    "project": $('#editCellProject').val(),
+                    "start": $('#editCellStart').val(),
+                    "end": $('#editCellEnd').val()
+                })
+            }).then(function (response) {
+            return response.text();
+            }).then(function (text) {
+                $('#editCell').modal('hide');
+                document.location.reload(true);
+            });
+        } else if ($('#editCellWhat').val() == "E"){
+            fetch('/add',
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    "guy": $('#editCellGuy').val(),
+                    "project": $('#editCellChoice').val(),
+                    "start": $('#editCellStart').val(),
+                    "end": $('#editCellEnd').val()
+                })
+            }).then(function (response) {
+            return response.text();
+            }).then(function (text) {
+                $('#editCell').modal('hide');
+                document.location.reload(true);
+            });
+        }
+    });
 })(jQuery);

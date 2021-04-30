@@ -16,7 +16,7 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+    <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">SDI Team</a>
 
     </nav>
@@ -37,6 +37,22 @@
                 <a class="nav-link" href="" data-toggle="modal" data-target="#personalCard" data-id="{{guy.id}}" data-person="{{guy.name}}">
                   <span data-feather="smile"></span>
                     {{guy.name}}
+                </a>
+              </li>
+                {% endfor %}
+            </ul>
+              <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Ongoing projects</span>
+              <a class="d-flex align-items-center text-muted" href="#">
+                <span data-feather="plus-circle"></span>
+              </a>
+            </h6>
+            <ul class="nav flex-column mb-2">
+                {% for project in projects %}
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                    {{project.title}}
                 </a>
               </li>
                 {% endfor %}
@@ -90,7 +106,7 @@
                                  data-guy="{{guy.id}}" data-project="{{guy.plan[loop.index][1].id}}"></div>
                         {% endif %}
                         {% else %}
-                        <div class="emptycell" data-week={{loop.index}} data-id="{{guy.id}}"></div>
+                        <div class="emptycell" data-week={{loop.index}} data-guy="{{guy.id}}"></div>
                         {% endif %}
                     </td>
                     {% endfor %}
@@ -126,24 +142,7 @@
             </button>
           </div>
           <div class="modal-body">
-              <form>
-                  <div class="form-row">
-                      <div class="col-sm-3">
-                          <label class="modal-form-label">Project</label>
-                      </div>
-                    <div class="col-sm-4">
-                        <label>Start</label>
-                        <input type="date" name="start">
-                    </div>
-                    <div class="col-sm-4">
-                        <label>End</label>
-                        <input type="date" name="end">
-                    </div>
-                      <div class="col-sm-1">
-                          <button type="button" class="close modal-btn-delete"><span data-feather="trash-2"></span></button>
-                      </div>
-                    </div>
-              </form>
+              <h3>to be created...</h3>
 
           </div>
           <div class="modal-footer">
@@ -168,6 +167,16 @@
                   <div class="form-row">
                       <div class="col-sm-3">
                           <label class="modal-form-label" id="editCellType">Project</label>
+                          <input type="hidden" name="editCellGuy" id="editCellGuy">
+                          <input type="hidden" name="editCellProject" id="editCellProject">
+                          <input type="hidden" name="editCellWhat" id="editCellWhat">
+                          <select class="custom-select custom-select-sm" id="editCellChoice">
+                              <option value="99" selected>Vacation</option>
+                              <option disabled>──────────</option>
+                              {% for project in projects%}
+                              <option value="{{project.id}}">{{project.title}}</option>
+                              {% endfor %}
+                          </select>
                       </div>
                     <div class="col-sm-4">
                         <label>Start</label>
@@ -181,12 +190,13 @@
                           <button type="button" class="close modal-btn-delete"><span data-feather="trash-2"></span></button>
                       </div>
                     </div>
+
               </form>
 
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-primary" id="editCellSave">Save</button>
           </div>
         </div>
       </div>

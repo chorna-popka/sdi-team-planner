@@ -50,31 +50,77 @@ def home():
         plans = create_plans(db.return_rows(query))
         guy["plan"] = plans
 
-    return render_template("index.html", guys=guys, thisweek=thisweek)
+    query = """SELECT * from projects"""
+    projects = db.return_rows(query)
+
+    return render_template("index.html", guys=guys, thisweek=thisweek, projects=projects)
 
 
-@app.route("/edit/<mate>")
-def edit(mate):
-    return render_template("index.html")
-
-
-@app.route("/get/<mate>", methods=["POST"])
-def get(mate):
+@app.route("/save/<what>", methods=["POST"])
+def save(what):
     if request.method == "POST":
         db = TeamDB(dbtype=SQLITE, dbname='team.sqlite')
-        query = f"select 'Vacation', v.start, v.end " \
-                f"from vacations v " \
-                f"where v.team_member = {int(mate)} " \
-                f"UNION " \
-                f"select p.title, a.start, a.end " \
-                f"from assignments a " \
-                f"left join projects p on p.id = a.project " \
-                f"where a.team_member = {int(mate)} " \
-                f"ORDER BY start"
+        if what == "vacation":
+            query = f"UPDATE vacations " \
+                    f"SET start = '{request.get_json()['start']} 00:00:00.000', " \
+                    f"end = '{request.get_json()['end']} 00:00:00.000' " \
+                    f"WHERE id = {int(request.get_json()['vacation'])} " \
+                    f"and team_member = {int(request.get_json()['guy'])}"
+        elif what == "project":
+            query = f"UPDATE assignments " \
+                    f"SET start = '{request.get_json()['start']} 00:00:00.000', " \
+                    f"end = '{request.get_json()['end']} 00:00:00.000' " \
+                    f"WHERE project = {int(request.get_json()['project'])} " \
+                    f"and team_member = {int(request.get_json()['guy'])}"
+
+        db.execute_query(query)
+    return 'OK', 200
+
+
+@app.route("/add", methods=["POST"])
+def add():
+    if request.method == "POST":
+        db = TeamDB(dbtype=SQLITE, dbname='team.sqlite')
+        what = request.get_json()['project']
+        if what == "99":
+            query = f"INSERT into vacations " \
+                    f"(team_member, start, end) " \
+                    f"VALUES (" \
+                    f"{int(request.get_json()['guy'])}, " \
+                    f"'{request.get_json()['start']} 00:00:00.000', " \
+                    f"'{request.get_json()['end']} 00:00:00.000')"
+        else:
+            query = f"INSERT into assignments " \
+                    f"(team_member, project, start, end) " \
+                    f"VALUES (" \
+                    f"{int(request.get_json()['guy'])}, " \
+                    f"{int(request.get_json()['project'])}, " \
+                    f"'{request.get_json()['start']} 00:00:00.000', " \
+                    f"'{request.get_json()['end']} 00:00:00.000')"
+
+        db.execute_query(query)
+    return 'OK', 200
+
+
+@app.route("/get/<what>", methods=["POST"])
+def get(what):
+    if request.method == "POST":
+        db = TeamDB(dbtype=SQLITE, dbname='team.sqlite')
+        if what == "vacation":
+            query = f"select v.start, v.end " \
+                    f"from vacations v " \
+                    f"where v.team_member = {int(request.get_json()['guy'])} " \
+                    f"and v.id = {int(request.get_json()['vacation'])} "
+        elif what == "project":
+            query = f"select a.start, a.end " \
+                    f"from assignments a " \
+                    f"left join projects p on p.id = a.project " \
+                    f"where a.team_member = {int(request.get_json()['guy'])} " \
+                    f"and p.id = {int(request.get_json()['project'])} "
+
         dataset = [{
-            "title": item[0],
-            "start": dt.datetime.fromisoformat(item[1]).strftime("%Y-%m-%d"),
-            "end": dt.datetime.fromisoformat(item[2]).strftime("%Y-%m-%d")
+            "start": dt.datetime.fromisoformat(item[0]).strftime("%Y-%m-%d"),
+            "end": dt.datetime.fromisoformat(item[1]).strftime("%Y-%m-%d")
         } for item in db.return_rows(query)]
 
         return jsonify(dataset)

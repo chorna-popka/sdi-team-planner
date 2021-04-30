@@ -59,6 +59,9 @@ body {
 /*
  * Navbar
  */
+.navbar-dark {
+    background-color: #681b88!important;
+}
 
 .navbar-brand {
   padding-top: .75rem;
@@ -194,11 +197,16 @@ body {
     border-bottom-color: #fff;
 }
 
-.modal-form-label {
+#editCellType {
     font-size: 18px;
     padding-top: 26px;
     color: #0075a2;
 }
+#editCellChoice {
+    margin-top: 27px;
+    color: #0075a2;
+}
+
 
 .modal-btn-delete {
     margin-top: 25px !important;
