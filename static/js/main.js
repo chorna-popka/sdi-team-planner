@@ -10,6 +10,44 @@ function getDateOfISOWeek(w, y) {
     return ISOweekStart.toISOString().split('T')[0];
 }
 
+function deleteRecord() {
+    if ($('#editCellWhat').val() == "V") {
+        fetch('/delete/vacation',
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({
+                "guy": $('#editCellGuy').val(),
+                "vacation": $('#editCellProject').val()
+            })
+        }).then(function (response) {
+        return response.text();
+        }).then(function (text) {
+           $('#editCell').modal('hide');
+           document.location.reload(true);
+        });
+    } else if ($('#editCellWhat').val() == "P"){
+        fetch('/delete/project',
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({
+                "guy": $('#editCellGuy').val(),
+                "project": $('#editCellProject').val()
+            })
+        }).then(function (response) {
+        return response.text();
+        }).then(function (text) {
+            $('#editCell').modal('hide');
+            document.location.reload(true);
+        });
+    }
+}
+
 !(function($) {
     "use strict";
     const YEAR = 2021;
@@ -96,7 +134,11 @@ function getDateOfISOWeek(w, y) {
     });
 
     $("#editCellSave").on("click", function() {
-        //send data to flask
+        //check delete flag, if yes - call delete function
+        if ($("#editCellDeleteFlag").val() == "1") {
+            deleteRecord();
+            return;
+        }
         if ($('#editCellWhat').val() == "V") {
             fetch('/save/vacation',
             {
@@ -155,5 +197,22 @@ function getDateOfISOWeek(w, y) {
                 document.location.reload(true);
             });
         }
+    });
+
+    $("#editCellDelete").on("click", function() {
+    // toggles delete flag if modal type is not empty
+        if ($('#editCellWhat').val() == "E") {
+            return;
+        }
+        if ($("#editCellDeleteFlag").val() == "1") {
+            $("#editCellDeleteFlag").val("0");
+            $('#editCellStart').prop("disabled", false);
+            $('#editCellEnd').prop("disabled", false);
+        } else {
+            $("#editCellDeleteFlag").val("1");
+            $('#editCellStart').prop("disabled", true);
+            $('#editCellEnd').prop("disabled", true);
+        }
+
     });
 })(jQuery);

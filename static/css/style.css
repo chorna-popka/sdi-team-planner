@@ -56,6 +56,15 @@ body {
   text-transform: uppercase;
 }
 
+
+.project-menu .nav-link {
+    font-weight: 400;
+    font-size: 14px;
+    padding: .2rem 1rem;
+}
+.project-country {
+    color: #ff780c;
+}
 /*
  * Navbar
  */
@@ -98,65 +107,142 @@ body {
 /*
  * chart
  */
-.year_plan {
-    min-width: 900px;
-    width: 900px;
-    min-height: 380px;
-    background-color: #dddddd;
-}
-.legend {
-    margin-top: 100px;
-}
-.weeks td {
-
-    border: 0px solid #fff;
-}
-.todaycell {
-    background-color: #ffa988;
-}
-.weekcell {
-    height:16px;
-    width:16px;
-    font-size: .6rem;
+div.too_small {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index:1000000;
+    background-color: #fff;
+    color: #aaa;
     text-align: center;
 }
-.namecell {
-    height:16px;
-    width:100px;
-    font-size: .6rem;
+div.too_small p {
+    font-size: 35px;
+    margin: 50% 0;
 }
-.emptycell {
-    height:16px;
-    width:16px;
-    background-color:#beca5c;
+@media only screen and (max-width: 999px) {
+    div.too_small {
+        display: block;
+    }
 }
-.emptycell:hover {
-    background-color:#8d9c14;
+@media only screen and (min-width: 1000px) {
+    div.too_small {
+        display: none;
+    }
+    .legend {
+        margin-top: 100px;
+    }
+    .weeks td {
+
+        border: 0px solid #fff;
+    }
+    .todaycell {
+        background-color: #ffa988;
+    }
+    .weekcell {
+        height:16px;
+        width:16px;
+        font-size: .6rem;
+        text-align: center;
+    }
+    .namecell {
+        height:16px;
+        width:100px;
+        font-size: .6rem;
+    }
+    .emptycell {
+        height:16px;
+        width:16px;
+        background-color:#beca5c;
+    }
+    .emptycell:hover {
+        background-color:#8d9c14;
+    }
+    .vacationcell {
+        height:16px;
+        width:16px;
+        background-color:#a2a2a2;
+    }
+    .dbl-projectcell-left {
+        height:16px;
+        width:8px;
+        background-color:#ef8d32;
+        float:left;
+    }
+    .dbl-projectcell-right {
+        height:16px;
+        width:8px;
+        margin-left:8px;
+        background-color:#cc561e;
+    }
+    .projectcell {
+        height:16px;
+        width:16px;
+        background-color:#ef8d32;
+    }
+    .projectcell:hover {
+        background-color:#d47720;
+    }
 }
-.vacationcell {
-    height:16px;
-    width:16px;
-    background-color:#a2a2a2;
-}
-.dbl-projectcell-left {
-    height:16px;
-    width:8px;
-    background-color:#ef8d32;
-    float:left;
-}
-.dbl-projectcell-right {
-    height:16px;
-    width:8px;
-    margin-left:8px;
-    background-color:#cc561e;
-}
-.projectcell {
-    height:16px;
-    width:16px;
-    background-color:#ef8d32;
-}
-.projectcell:hover {
-    background-color:#d47720;
+@media only screen and (min-width: 1920px) {
+    div.too_small {
+        display: none;
+    }
+    .legend {
+        margin-top: 120px;
+    }
+    .weeks td {
+        border: 0px solid #fff;
+    }
+    .todaycell {
+        background-color: #ffa988;
+    }
+    .weekcell {
+        height:22px;
+        width:22px;
+        font-size: 1rem;
+        text-align: center;
+    }
+    .namecell {
+        height:22px;
+        width:150px;
+        font-size: 1rem;
+    }
+    .emptycell {
+        height:22px;
+        width:22px;
+        background-color:#beca5c;
+    }
+    .emptycell:hover {
+        background-color:#8d9c14;
+    }
+    .vacationcell {
+        height:22px;
+        width:22px;
+        background-color:#a2a2a2;
+    }
+    .dbl-projectcell-left {
+        height:22px;
+        width:11px;
+        background-color:#ef8d32;
+        float:left;
+    }
+    .dbl-projectcell-right {
+        height:22px;
+        width:11px;
+        margin-left:11px;
+        background-color:#cc561e;
+    }
+    .projectcell {
+        height:22px;
+        width:22px;
+        background-color:#ef8d32;
+    }
+    .projectcell:hover {
+        background-color:#d47720;
+    }
 }
 /*
  * tooltip

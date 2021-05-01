@@ -16,8 +16,9 @@
   </head>
 
   <body>
+  <div class="too_small"><p>Your screen resolution is too small to display the page.</p></div>
     <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">SDI Team</a>
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Team Planner</a>
 
     </nav>
 
@@ -47,12 +48,12 @@
                 <span data-feather="plus-circle"></span>
               </a>
             </h6>
-            <ul class="nav flex-column mb-2">
+            <ul class="nav flex-column mb-2 project-menu">
                 {% for project in projects %}
               <li class="nav-item">
                 <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                    {{project.title}}
+                  <span data-feather="trello"></span>
+                    {{project.title}} <span class="project-country">({{project.country}})</span>
                 </a>
               </li>
                 {% endfor %}
@@ -63,7 +64,7 @@
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h1 class="h2">Dashboard</h1>
+            <h3 class="h3">Solution Design and Implementations Team</h3>
             <div class="btn-toolbar mb-2 mb-md-0">
               <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
                 <span data-feather="calendar"></span>
@@ -170,6 +171,7 @@
                           <input type="hidden" name="editCellGuy" id="editCellGuy">
                           <input type="hidden" name="editCellProject" id="editCellProject">
                           <input type="hidden" name="editCellWhat" id="editCellWhat">
+                          <input type="hidden" name="editCellDeleteFlag" id="editCellDeleteFlag">
                           <select class="custom-select custom-select-sm" id="editCellChoice">
                               <option value="99" selected>Vacation</option>
                               <option disabled>──────────</option>
@@ -187,7 +189,7 @@
                         <input type="date" name="end" id="editCellEnd">
                     </div>
                       <div class="col-sm-1">
-                          <button type="button" class="close modal-btn-delete"><span data-feather="trash-2"></span></button>
+                          <button type="button" class="close modal-btn-delete" id="editCellDelete"><span data-feather="trash-2"></span></button>
                       </div>
                     </div>
 

@@ -15,6 +15,7 @@ def create_plans(plans):
             val = {"type": "V", "id": plan[3]}
         else:
             val = {"type": "P", "project": plan[0], "id": plan[3]}
+
         begin = dt.datetime.fromisoformat(plan[1]).isocalendar()[1]
         end = dt.datetime.fromisoformat(plan[2]).isocalendar()[1]
         if begin == 53 and begin > end:
@@ -77,6 +78,23 @@ def save(what):
     return 'OK', 200
 
 
+@app.route("/delete/<what>", methods=["POST"])
+def delete(what):
+    if request.method == "POST":
+        db = TeamDB(dbtype=SQLITE, dbname='team.sqlite')
+        if what == "vacation":
+            query = f"DELETE from vacations " \
+                    f"WHERE id = {int(request.get_json()['vacation'])} " \
+                    f"and team_member = {int(request.get_json()['guy'])}"
+        elif what == "project":
+            query = f"DELETE from assignments " \
+                    f"WHERE project = {int(request.get_json()['project'])} " \
+                    f"and team_member = {int(request.get_json()['guy'])}"
+
+        db.execute_query(query)
+    return 'OK', 200
+
+
 @app.route("/add", methods=["POST"])
 def add():
     if request.method == "POST":
@@ -124,7 +142,6 @@ def get(what):
         } for item in db.return_rows(query)]
 
         return jsonify(dataset)
-
 
 
 if __name__ == '__main__':
