@@ -51,7 +51,7 @@ def home():
         plans = create_plans(db.return_rows(query))
         guy["plan"] = plans
 
-    query = """SELECT * from projects"""
+    query = """SELECT * from projects WHERE active = 1 ORDER BY title"""
     projects = db.return_rows(query)
 
     return render_template("index.html", guys=guys, thisweek=thisweek, projects=projects)
@@ -67,12 +67,31 @@ def save(what):
                     f"end = '{request.get_json()['end']} 00:00:00.000' " \
                     f"WHERE id = {int(request.get_json()['vacation'])} " \
                     f"and team_member = {int(request.get_json()['guy'])}"
-        elif what == "project":
+        elif what == "assignment":
             query = f"UPDATE assignments " \
                     f"SET start = '{request.get_json()['start']} 00:00:00.000', " \
                     f"end = '{request.get_json()['end']} 00:00:00.000' " \
                     f"WHERE project = {int(request.get_json()['project'])} " \
                     f"and team_member = {int(request.get_json()['guy'])}"
+        elif what == "project":
+            if request.get_json()['project'] == "0":
+                # new project
+                query = f"INSERT INTO projects (title, country, start, end, active) " \
+                        f"VALUES (" \
+                        f"'{request.get_json()['title']}', " \
+                        f"'{request.get_json()['country']}', " \
+                        f"'{request.get_json()['start']} 00:00:00.000', " \
+                        f"'{request.get_json()['end']} 00:00:00.000', " \
+                        f"{int(request.get_json()['active'])}" \
+                        f") "
+            else:
+                query = f"UPDATE projects " \
+                        f"SET start = '{request.get_json()['start']} 00:00:00.000', " \
+                        f"end = '{request.get_json()['end']} 00:00:00.000', " \
+                        f"title = '{request.get_json()['title']}', " \
+                        f"country = '{request.get_json()['country']}', " \
+                        f"active = {int(request.get_json()['active'])} " \
+                        f"WHERE id = {int(request.get_json()['project'])} "
 
         db.execute_query(query)
     return 'OK', 200

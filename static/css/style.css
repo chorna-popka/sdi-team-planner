@@ -299,3 +299,9 @@ div.too_small p {
     color: #b31313 !important;
     opacity: 1 !important;
 }
+
+.project-window {
+    padding: 4px;
+    color: #007bff;
+    background-color: whitesmoke;
+}

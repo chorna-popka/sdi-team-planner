@@ -44,14 +44,15 @@
             </ul>
               <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
               <span>Ongoing projects</span>
-              <a class="d-flex align-items-center text-muted" href="#">
+              <a class="d-flex align-items-center text-muted" href="" id="projectAddButton">
                 <span data-feather="plus-circle"></span>
               </a>
             </h6>
             <ul class="nav flex-column mb-2 project-menu">
                 {% for project in projects %}
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="" data-project="{{project.id}}" data-title="{{project.title}}"
+                   data-country="{{project.country}}" data-start="{{project.start}}" data-end="{{project.end}}">
                   <span data-feather="trello"></span>
                     {{project.title}} <span class="project-country">({{project.country}})</span>
                 </a>
@@ -132,6 +133,54 @@
       </div>
     </div>
 
+    <div class="modal fade" id="projectCard" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title" id="projectCardLabel">New message</h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <form>
+                  <div class="form-group row">
+                    <label for="projectCardCountry" class="col-sm-2 col-form-label">Country</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="projectCardCountry" placeholder="Enter country">
+                        <input type="hidden" name="projectCardId" id="projectCardId">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="projectCardStart" class="col-sm-2 col-form-label">Start</label>
+                    <div class="col-sm-10">
+                      <input type="date" name="start" id="projectCardStart">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="projectCardEnd" class="col-sm-2 col-form-label">End</label>
+                    <div class="col-sm-10">
+                      <input type="date" name="start" id="projectCardEnd">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-2">Active?</div>
+                    <div class="col-sm-10">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="projectCardActive" checked>
+                      </div>
+                    </div>
+                  </div>
+              </form>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="projectCardSave">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="modal fade" id="personalCard" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">

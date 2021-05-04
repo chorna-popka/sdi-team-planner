@@ -56,7 +56,30 @@ function deleteRecord() {
     $('#editCellChoice').on("change", function() {
 
     });
+//projects
+    $("a[data-project]").each(function(index) {
+        $(this).on("click", function(event){
+            event.preventDefault();
+            $('#projectCardLabel').html("Edit <span class='project-window' id='projectCardTitle' contenteditable>" + $(this).data("title") + "</span>");
+            $('#projectCardId').val($(this).data("project"));
+            $('#projectCardCountry').val($(this).data("country"));
+            $('#projectCardStart').val($(this).data("start").slice(0,10));
+            $('#projectCardEnd').val($(this).data("end").slice(0,10));
+            $('#projectCard').modal('show');
+        });
+    });
+    $("#projectAddButton").on("click", function(event){
+        event.preventDefault();
+        $('#projectCardLabel').html("Add <span class='project-window' id='projectCardTitle' contenteditable>New Project</span>");
+        $('#projectCardId').val("0");
+        $('#projectCardCountry').val("");
+        $('#projectCardStart').val("");
+        $('#projectCardEnd').val("");
+        $('#projectCard').modal('show');
+    });
 
+
+//cells
     $("div[data-week]").each(function(index) {
         $(this).on("click", function(){
             var guy = $(this).data('guy');
@@ -86,6 +109,7 @@ function deleteRecord() {
                     $('#editCellType').html("Vacation");
                     $('#editCellStart').val(text[0].start);
                     $('#editCellEnd').val(text[0].end);
+                    $('#editCell').modal('show');
                 });
             } else if ($(this).hasClass('emptycell')) {
                 $('#editCellLabel').html("Add plan");
@@ -98,6 +122,7 @@ function deleteRecord() {
                 $('#editCellEnd').val("");
                 $('#editCellType').hide();
                 $('#editCellChoice').show();
+                $('#editCell').modal('show');
 
             } else {
                 var projectId = $(this).data('project');
@@ -126,13 +151,12 @@ function deleteRecord() {
                     $('#editCellType').html(projectName);
                     $('#editCellStart').val(text[0].start);
                     $('#editCellEnd').val(text[0].end);
+                    $('#editCell').modal('show');
                 });
             }
-
-            $('#editCell').modal('show');
         });
     });
-
+//save in modal
     $("#editCellSave").on("click", function() {
         //check delete flag, if yes - call delete function
         if ($("#editCellDeleteFlag").val() == "1") {
@@ -159,7 +183,7 @@ function deleteRecord() {
                document.location.reload(true);
             });
         } else if ($('#editCellWhat').val() == "P"){
-            fetch('/save/project',
+            fetch('/save/assignment',
             {
                 headers: {
                     'Content-Type': 'application/json'
@@ -199,6 +223,41 @@ function deleteRecord() {
         }
     });
 
+    $("#projectCardSave").on("click", function() {
+        if ($('#projectCardTitle').html() == "" ||
+            $('#projectCardTitle').html() == "New Project" ||
+            $('#projectCardCountry').val() == "" ||
+            $('#projectCardStart').val() == "" ||
+            $('#projectCardEnd').val() == "") {
+            return;
+        }
+        var active = 1;
+        if (!$('#projectCardActive').prop("checked")) {
+            active = 0;
+        }
+        fetch('/save/project',
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    "project": $('#projectCardId').val(),
+                    "title": $('#projectCardTitle').html(),
+                    "country": $('#projectCardCountry').val(),
+                    "start": $('#projectCardStart').val(),
+                    "end": $('#projectCardEnd').val(),
+                    "active":  active
+                })
+            }).then(function (response) {
+            return response.text();
+            }).then(function (text) {
+                $('#projectCard').modal('hide');
+                document.location.reload(true);
+            });
+
+    });
+//delete activator
     $("#editCellDelete").on("click", function() {
     // toggles delete flag if modal type is not empty
         if ($('#editCellWhat').val() == "E") {
@@ -215,4 +274,5 @@ function deleteRecord() {
         }
 
     });
+
 })(jQuery);
