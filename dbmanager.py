@@ -3,18 +3,18 @@ from sqlalchemy import create_engine
 
 # Global Variables
 SQLITE = 'sqlite'
-PG = 'postgres'
 PGS = 'postgres'
 
 # Table Names
-basedir = os.path.abspath(os.path.dirname(__file__))
+# os.environ['DATABASE_URL'] = 'postgres://fndampqtimsbfe:3573c2aa7833dc8abbf904210057db5a5538045ace2568853c1d4a861e6ed311@ec2-63-34-97-163.eu-west-1.compute.amazonaws.com:5432/dbpmqari93vh65'
+database_path = os.getenv('DATABASE_URL', 'postgresql://localhost/team-planner')
+if database_path.startswith("postgres://"):
+    database_path = database_path.replace("postgres://", "postgresql://", 1)
 
 
 class TeamDB:
     DB_ENGINE = {
-        PG: f'postgresql://localhost/team-planner',
-        PGS: f'postgres://fndampqtimsbfe:3573c2aa7833dc8abbf904210057db5a5538045ace2568853c1d4a861e6ed311@ec2-63-34'
-             f'-97-163.eu-west-1.compute.amazonaws.com:5432/dbpmqari93vh65 '
+        PGS: database_path,
     }
 
     # Main DB Connection Ref Obj
@@ -34,8 +34,8 @@ class TeamDB:
         with self.db_engine.connect() as connection:
             try:
                 connection.execute(query)
-                print(f"Query {query} Complete!")
             except Exception as e:
+                print(f"Query error {e}!")
                 return e
 
     def return_rows(self, query=''):

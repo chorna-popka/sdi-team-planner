@@ -1,12 +1,16 @@
 from flask import Flask, render_template, request, url_for, jsonify
-from dbmanager import TeamDB, PG, PGS
+from dbmanager import TeamDB, PGS
 import datetime as dt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ojwononceim8378478(&HD&&$Hhhdfj##dd'
 uname = 'postgres'
 pwd = 'qweewq13P'
-db = TeamDB(dbtype=PGS, username=uname, password=pwd, dbname='team-planner')
+uname_h = 'fndampqtimsbfe'
+pwd_h = '3573c2aa7833dc8abbf904210057db5a5538045ace2568853c1d4a861e6ed311'
+dbname = 'team-planner'
+dbname_h = 'dbpmqari93vh65'
+db = TeamDB(dbtype=PGS, username=uname_h, password=pwd_h, dbname=dbname_h)
 
 
 def create_plans(plans):
@@ -78,7 +82,7 @@ def save(what):
         elif what == "project":
             if request.get_json()['project'] == "0":
                 # new project
-                query = f"INSERT INTO projects (title, country, start, end, active) " \
+                query = f"INSERT INTO projects (title, country, 'start', 'end', active) " \
                         f"VALUES (" \
                         f"'{request.get_json()['title']}', " \
                         f"'{request.get_json()['country']}', " \
@@ -88,13 +92,14 @@ def save(what):
                         f") "
             else:
                 query = f"UPDATE projects " \
-                        f"SET start = '{request.get_json()['start']} 00:00:00.000', " \
+                        f"SET 'start' = '{request.get_json()['start']} 00:00:00.000', " \
                         f"end = '{request.get_json()['end']} 00:00:00.000', " \
                         f"title = '{request.get_json()['title']}', " \
                         f"country = '{request.get_json()['country']}', " \
                         f"active = {int(request.get_json()['active'])} " \
                         f"WHERE id = {int(request.get_json()['project'])} "
 
+        query = query.replace('end', '"end"')
         db.execute_query(query)
     return 'OK', 200
 
@@ -119,7 +124,7 @@ def delete(what):
 def add():
     if request.method == "POST":
         what = request.get_json()['project']
-        if what == "99":
+        if what == "v":
             query = f"INSERT into vacations " \
                     f"(team_member, start, end) " \
                     f"VALUES (" \
@@ -135,6 +140,7 @@ def add():
                     f"'{request.get_json()['start']} 00:00:00.000', " \
                     f"'{request.get_json()['end']} 00:00:00.000')"
 
+        query = query.replace('end', '"end"')
         db.execute_query(query)
     return 'OK', 200
 
