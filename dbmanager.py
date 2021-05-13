@@ -11,7 +11,6 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class TeamDB:
     DB_ENGINE = {
-        SQLITE: f'sqlite:///{basedir}/static/files/db.db',
         PG: f'postgresql://localhost/team-planner',
     }
 

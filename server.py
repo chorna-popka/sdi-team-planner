@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, url_for, jsonify
-from werkzeug.utils import redirect
 from dbmanager import TeamDB, PG
 import datetime as dt
 
