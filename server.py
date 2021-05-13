@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, url_for, jsonify
-from dbmanager import TeamDB, PG
+from dbmanager import TeamDB, PG, PGS
 import datetime as dt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ojwononceim8378478(&HD&&$Hhhdfj##dd'
 uname = 'postgres'
 pwd = 'qweewq13P'
-db = TeamDB(dbtype=PG, username=uname, password=pwd, dbname='team-planner')
+db = TeamDB(dbtype=PGS, username=uname, password=pwd, dbname='team-planner')
 
 
 def create_plans(plans):

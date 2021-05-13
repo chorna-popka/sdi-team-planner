@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 # Global Variables
 SQLITE = 'sqlite'
 PG = 'postgres'
+PGS = 'postgres'
 
 # Table Names
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -12,6 +13,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class TeamDB:
     DB_ENGINE = {
         PG: f'postgresql://localhost/team-planner',
+        PGS: f'postgres://fndampqtimsbfe:3573c2aa7833dc8abbf904210057db5a5538045ace2568853c1d4a861e6ed311@ec2-63-34'
+             f'-97-163.eu-west-1.compute.amazonaws.com:5432/dbpmqari93vh65 '
     }
 
     # Main DB Connection Ref Obj
