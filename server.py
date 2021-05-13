@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request, url_for, jsonify
 from werkzeug.utils import redirect
-from dbmanager import TeamDB, SQLITE
+from dbmanager import TeamDB, PG
 import datetime as dt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ojwononceim8378478(&HD&&$Hhhdfj##dd'
+uname = 'postgres'
+pwd = 'qweewq13P'
+db = TeamDB(dbtype=PG, username=uname, password=pwd, dbname='team-planner')
 
 
 def create_plans(plans):
@@ -22,8 +25,11 @@ def create_plans(plans):
             begin = 1
 
         for w in range(begin, end + 1):
-            if w in plns:  # adding another plan for the same week
-                plns[w].append(val)
+            if w in plns:  # adding another plan for the same week, vacation always on top
+                if val['type'] == 'V':
+                    plns[w].insert(0, val)
+                else:
+                    plns[w].append(val)
             else:
                 plns[w] = [val]
     return plns
@@ -33,10 +39,8 @@ def create_plans(plans):
 @app.route("/")
 def home():
     thisweek = dt.datetime.now().isocalendar()[1]
-    # mock dict to be replaced with database query
-    db = TeamDB(dbtype=SQLITE, dbname='team.sqlite')
-    query = """select tm.id, tm.name || ' ' || tm.last_name name
-                from team_members tm"""
+    query = """select tm.id as id, CONCAT(tm.name, ' ', tm.last_name) as name
+                from team_members as tm"""
     dataset = db.return_rows(query)
     guys = [{"id": n[0], "name": n[1], "plan": {}} for n in dataset]
     for guy in guys:
@@ -60,7 +64,6 @@ def home():
 @app.route("/save/<what>", methods=["POST"])
 def save(what):
     if request.method == "POST":
-        db = TeamDB(dbtype=SQLITE, dbname='team.sqlite')
         if what == "vacation":
             query = f"UPDATE vacations " \
                     f"SET start = '{request.get_json()['start']} 00:00:00.000', " \
@@ -100,7 +103,6 @@ def save(what):
 @app.route("/delete/<what>", methods=["POST"])
 def delete(what):
     if request.method == "POST":
-        db = TeamDB(dbtype=SQLITE, dbname='team.sqlite')
         if what == "vacation":
             query = f"DELETE from vacations " \
                     f"WHERE id = {int(request.get_json()['vacation'])} " \
@@ -117,7 +119,6 @@ def delete(what):
 @app.route("/add", methods=["POST"])
 def add():
     if request.method == "POST":
-        db = TeamDB(dbtype=SQLITE, dbname='team.sqlite')
         what = request.get_json()['project']
         if what == "99":
             query = f"INSERT into vacations " \
@@ -142,7 +143,6 @@ def add():
 @app.route("/get/<what>", methods=["POST"])
 def get(what):
     if request.method == "POST":
-        db = TeamDB(dbtype=SQLITE, dbname='team.sqlite')
         if what == "vacation":
             query = f"select v.start, v.end " \
                     f"from vacations v " \
