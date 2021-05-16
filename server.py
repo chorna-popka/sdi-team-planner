@@ -99,7 +99,7 @@ def save(what):
         elif what == "project":
             if request.get_json()['project'] == "0":
                 # new project
-                query = f"INSERT INTO projects (title, country, 'start', 'end', active) " \
+                query = f"INSERT INTO projects (title, country, start, end, active) " \
                         f"VALUES (" \
                         f"'{request.get_json()['title']}', " \
                         f"'{request.get_json()['country']}', " \
@@ -109,7 +109,7 @@ def save(what):
                         f") "
             else:
                 query = f"UPDATE projects " \
-                        f"SET 'start' = '{request.get_json()['start']} 00:00:00.000', " \
+                        f"SET start = '{request.get_json()['start']} 00:00:00.000', " \
                         f"end = '{request.get_json()['end']} 00:00:00.000', " \
                         f"title = '{request.get_json()['title']}', " \
                         f"country = '{request.get_json()['country']}', " \
