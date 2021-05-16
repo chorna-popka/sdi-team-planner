@@ -26,13 +26,13 @@
       <div class="row">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
+              <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                  <span>People</span>
+                  <a class="d-flex align-items-center text-muted" href="" id="peopleAddButton">
+                    <span data-feather="plus-circle"></span>
+                  </a>
+                </h6>
             <ul class="nav flex-column">
-              <li class="nav-item">
-                <a class="nav-link active" href="{{url_for('home')}}">
-                  <span data-feather="home"></span>
-                  Dashboard <span class="sr-only">(current)</span>
-                </a>
-              </li>
                 {% for guy in guys %}
               <li class="nav-item">
                 <a class="nav-link" href="" data-toggle="modal" data-target="#personalCard" data-id="{{guy.id}}" data-person="{{guy.name}}">
@@ -42,12 +42,12 @@
               </li>
                 {% endfor %}
             </ul>
-              <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-              <span>Ongoing projects</span>
-              <a class="d-flex align-items-center text-muted" href="" id="projectAddButton">
-                <span data-feather="plus-circle"></span>
-              </a>
-            </h6>
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                  <span>Ongoing projects</span>
+                  <a class="d-flex align-items-center text-muted" href="" id="projectAddButton">
+                    <span data-feather="plus-circle"></span>
+                  </a>
+                </h6>
             <ul class="nav flex-column mb-2 project-menu">
                 {% for project in projects %}
               <li class="nav-item">
@@ -67,10 +67,15 @@
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
             <h3 class="h3">Solution Design and Implementations Team</h3>
             <div class="btn-toolbar mb-2 mb-md-0">
-              <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
+              <button class="btn btn-sm btn-outline-secondary dropdown-toggle" id="yearSelect" data-toggle="dropdown">
                 <span data-feather="calendar"></span>
-                2021
+                  {{thisyear}}
               </button>
+                <div class="dropdown-menu" aria-labelledby="yearSelect">
+                    {% for y in years %}
+                    <a class="dropdown-item" href="#">{{y}}</a>
+                    {% endfor %}
+                </div>
             </div>
           </div>
             <table class="weeks">

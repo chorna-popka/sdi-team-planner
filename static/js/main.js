@@ -1,13 +1,17 @@
 function getDateOfISOWeek(w, y) {
     var simple = new Date(y, 0, 1 + (w - 1) * 7);
     var dow = simple.getDay();
-    var ISOweekStart = simple;
-    if (dow <= 4)
-        ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
-    else
-        ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
-    var ISOweekEnd = ISOweekStart;
-    return ISOweekStart.toISOString().split('T')[0];
+    //preventing mutations of simple
+    var ISOweekStart = new Date(simple.getTime());
+    var ISOweekEnd = new Date(simple.getTime());
+    if (dow <= 4) {
+        ISOweekStart.setDate(simple.getDate() - simple.getDay() + 2);
+        ISOweekEnd.setDate(simple.getDate() - simple.getDay() + 7);
+    } else {
+        ISOweekStart.setDate(simple.getDate() + 9 - simple.getDay());
+        ISOweekEnd.setDate(simple.getDate() + 14 - simple.getDay());
+    }
+    return [ISOweekStart.toISOString().split('T')[0], ISOweekEnd.toISOString().split('T')[0]]
 }
 
 function deleteRecord() {
@@ -77,6 +81,10 @@ function deleteRecord() {
         $('#projectCardEnd').val("");
         $('#projectCard').modal('show');
     });
+    $("#peopleAddButton").on("click", function(event){
+        event.preventDefault();
+        $('#personalCard').modal('show');
+    });
 
 
 //cells
@@ -115,11 +123,12 @@ function deleteRecord() {
                 $('#editCellLabel').html("Add plan");
 
                 var week = $(this).data('week');
-                var start = getDateOfISOWeek(parseInt(week), YEAR);
+                var start = getDateOfISOWeek(parseInt(week), YEAR)[0];
+                var end = getDateOfISOWeek(parseInt(week), YEAR)[1];
                 $('#editCellGuy').val(guy);
                 $('#editCellWhat').val("E");
                 $('#editCellStart').val(start);
-                $('#editCellEnd').val("");
+                $('#editCellEnd').val(end);
                 $('#editCellType').hide();
                 $('#editCellChoice').show();
                 $('#editCell').modal('show');

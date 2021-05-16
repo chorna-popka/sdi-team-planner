@@ -26,6 +26,8 @@ def create_plans(plans):
         end = dt.datetime.fromisoformat(plan[2]).isocalendar()[1]
         if begin == 53 and begin > end:
             begin = 1
+        if begin > end:  # TODO if spills over year end - show only this year
+            pass
 
         for w in range(begin, end + 1):
             if w in plns:  # adding another plan for the same week, vacation always on top
@@ -42,6 +44,7 @@ def create_plans(plans):
 @app.route("/")
 def home():
     thisweek = dt.datetime.now().isocalendar()[1]
+    thisyear = dt.datetime.now().year
     query = """select tm.id as id, CONCAT(tm.name, ' ', tm.last_name) as name
                 from team_members as tm"""
     dataset = db.return_rows(query)
@@ -49,19 +52,33 @@ def home():
     for guy in guys:
         query = f"select 'Vacation', v.start, v.end, v.id " \
                 f"from vacations v " \
-                f"where v.team_member = {guy['id']} " \
+                f"where v.team_member = {guy['id']} and (LEFT(v.start, 4) = '{thisyear}' " \
+                f"OR LEFT(v.end, 4) = '{thisyear}') " \
                 f"UNION " \
                 f"select p.title, a.start, a.end, p.id " \
                 f"from assignments a " \
                 f"left join projects p on p.id = a.project " \
-                f"where a.team_member = {guy['id']} "
+                f"where a.team_member = {guy['id']} and (LEFT(a.start, 4) = '{thisyear}' " \
+                f"OR LEFT(a.end, 4) = '{thisyear}') "
         plans = create_plans(db.return_rows(query))
         guy["plan"] = plans
 
     query = """SELECT * from projects WHERE active = 1 ORDER BY title"""
     projects = db.return_rows(query)
 
-    return render_template("index.html", guys=guys, thisweek=thisweek, projects=projects)
+    # building year dropdown
+    query = """SELECT DISTINCT(LEFT(start, 4)) as years from assignments
+                UNION
+                SELECT DISTINCT(LEFT(start, 4)) as years from vacations"""
+    years = db.return_rows(query)
+    years = [int(y[0]) for y in years]
+    if thisyear not in years:
+        years.insert(0, thisyear)
+    years.insert(0, thisyear + 1)
+
+    return render_template("index.html", guys=guys,
+                           thisweek=thisweek, projects=projects,
+                           thisyear=thisyear, years=years)
 
 
 @app.route("/save/<what>", methods=["POST"])
